@@ -1,0 +1,8 @@
+{
+  "name": "Success Life 2026 - Ticketing Platform",
+  "description": "Plateforme moderne de billetterie pour la conférence Success Life 2026 avec gestion des paiements Mobile Money et Crypto, tableau de bord utilisateur et administration avec scanner QR.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}
