@@ -4,7 +4,7 @@ import { Hero } from './components/Hero';
 import { Speakers } from './components/Speakers';
 import { Agenda } from './components/Agenda';
 import { Partners } from './components/Partners';
-import { FAQ } from './components/FAQ';
+import { FAQ as FAQSection } from './components/FAQ';
 import { Reviews } from './components/Reviews';
 import { Features } from './components/Features';
 import { Footer } from './components/Footer';
@@ -13,7 +13,7 @@ import { Dashboard } from './components/Dashboard';
 import { AdminDashboard } from './components/AdminDashboard';
 import { ReservationModal } from './components/ReservationModal';
 import { db } from './lib/db';
-import { AppState, Ticket, UserInfo, Speaker, Session, Partner, Review } from './types';
+import { AppState, Ticket, UserInfo, Speaker, Session, Partner, Review, FAQ } from './types';
 import { EVENT_DETAILS } from './constants';
 
 const App: React.FC = () => {
@@ -142,7 +142,7 @@ const App: React.FC = () => {
             <Agenda sessions={appState.sessions} speakers={appState.speakers} />
             <Partners partners={appState.partners} />
             <Reviews reviews={appState.reviews} />
-            <FAQ faqs={appState.faqs} />
+            <FAQSection faqs={appState.faqs} />
             <Features />
           </>
         )}
