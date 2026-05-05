@@ -89,6 +89,7 @@ export interface AppState {
   sessions: Session[];
   partners: Partner[];
   faqs: FAQ[];
+  reviews: Review[];
   currentUser: UserInfo & { role?: string } | null;
   isAdmin: boolean;
 }

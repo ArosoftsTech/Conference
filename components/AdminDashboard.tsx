@@ -1,16 +1,14 @@
-
 import React, { useState, useRef } from 'react';
 import { 
   ShieldCheck, RefreshCw, Search, CheckCircle, XCircle, 
   Download, QrCode, User, Mail, Phone, Calendar, Clock, 
   MapPin, Plus, Trash2, Edit, Ticket as TicketIcon, 
   DollarSign, TrendingUp, Filter, FileText, ImageIcon,
-  ExternalLink, ChevronRight, BarChart3, PieChart as PieIcon,
-  Activity, Users
+  ExternalLink, ChevronRight
 } from 'lucide-react';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, PieChart, Pie, Cell, Legend,
+  BarChart, Bar, XAxis, YAxis, Tooltip, 
+  ResponsiveContainer, PieChart, Pie, Cell,
   AreaChart, Area
 } from 'recharts';
 import { Ticket, Speaker, Session, Partner, FAQ } from '../types';
