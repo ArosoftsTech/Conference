@@ -4,7 +4,7 @@ import {
   Download, QrCode, User, Mail, Phone, Calendar, Clock, 
   MapPin, Plus, Trash2, Edit, Ticket as TicketIcon, 
   DollarSign, TrendingUp, Filter, FileText, ImageIcon,
-  ExternalLink, ChevronRight
+  ExternalLink, ChevronRight, Eye, CheckCircle2, CreditCard, Edit2
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, 
@@ -475,7 +475,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
            </div>
         </div>
       )}
-
+      {tab === 'TICKETS' && (
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
              <div className="relative w-full md:w-96">
