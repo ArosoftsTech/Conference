@@ -108,9 +108,8 @@ const App: React.FC = () => {
     localStorage.removeItem('sl2026_session_user');
   };
 
-  const handleAdminUpdateTickets = async (updatedTickets: Ticket[]) => {
-    await Promise.all(updatedTickets.map(t => db.saveTicket(t)));
-    refreshData();
+  const handleAdminUpdateTickets = (updatedTickets: Ticket[]) => {
+    setAppState(prev => ({ ...prev, tickets: updatedTickets }));
   };
 
   const handleAdminUpdateSpeakers = async () => {
