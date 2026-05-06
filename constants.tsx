@@ -19,21 +19,21 @@ export const EVENT_DETAILS = {
       id: "1",
       name: "Coach Ivan Barrou", 
       role: "Expert en accompagnement & Leadership",
-      imageUrl: "input_file_2.png",
+      imageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop&crop=face",
       orderIndex: 0
     },
     { 
       id: "2",
       name: "Martial Krekoumou", 
       role: "Coach Formateur, Optimiseur de cerveau, Psychologue énergéticien",
-      imageUrl: "input_file_0.png",
+      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&crop=face",
       orderIndex: 1
     },
     { 
       id: "3",
       name: "Coach Arnaud Kallou", 
       role: "Mentor en développement du potentiel",
-      imageUrl: "input_file_1.png",
+      imageUrl: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=500&fit=crop&crop=face",
       orderIndex: 2
     }
   ],

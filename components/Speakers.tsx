@@ -32,12 +32,30 @@ export const Speakers: React.FC<SpeakersProps> = ({ speakers }) => {
               className="group relative"
             >
               <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-blue-900/5 p-4 transition-all duration-500 hover:shadow-blue-900/10 hover:-translate-y-2 border border-slate-100 overflow-hidden">
-                <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-6">
-                  <img 
-                    src={speaker.imageUrl} 
-                    alt={speaker.name} 
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-6 bg-gradient-to-br from-blue-100 to-blue-50">
+                  {speaker.imageUrl && !speaker.imageUrl.startsWith('input_file') ? (
+                    <img 
+                      src={speaker.imageUrl} 
+                      alt={speaker.name} 
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        const parent = target.parentElement;
+                        if (parent && !parent.querySelector('.fallback-initials')) {
+                          const fallback = document.createElement('div');
+                          fallback.className = 'fallback-initials absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800';
+                          fallback.innerHTML = `<span style="font-size:4rem;font-weight:900;color:white;text-transform:uppercase">${speaker.name.split(' ').map(n => n[0]).join('')}</span>`;
+                          parent.appendChild(fallback);
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-600 to-blue-800">
+                      <span className="text-6xl font-black text-white uppercase">{speaker.name.split(' ').map(n => n[0]).join('')}</span>
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 </div>
                 
