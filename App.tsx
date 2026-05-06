@@ -125,7 +125,10 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white text-slate-900">
+    <div className="min-h-screen text-slate-900 relative">
+      {/* Background Image */}
+      <div className="fixed inset-0 z-[-1] bg-[url('/bg.png')] bg-cover bg-center opacity-5"></div>
+      
       <Navbar 
         view={appState.view} 
         user={appState.currentUser} 
