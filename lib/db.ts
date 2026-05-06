@@ -5,6 +5,48 @@ import { supabase } from './supabase';
 const ADMIN_UUID = '78342b26-cc60-4ee1-b25d-859f482f43fa';
 const ADMIN_EMAIL = 'admin@successlife.com';
 
+// Upload an image (base64 data URL) to Supabase Storage and return the public URL
+export const uploadImage = async (base64DataUrl: string, folder: string, fileName: string): Promise<string> => {
+  try {
+    // Convert base64 to blob
+    const res = await fetch(base64DataUrl);
+    const blob = await res.blob();
+    
+    // Determine extension from MIME type
+    const ext = blob.type.split('/')[1] === 'png' ? 'png' : 'jpg';
+    const timestamp = Date.now();
+    const filePath = `${folder}/${fileName}_${timestamp}.${ext}`;
+
+    // Ensure the bucket exists (will silently fail if already exists)
+    await supabase.storage.createBucket('images', { public: true, fileSizeLimit: 5242880 }).catch(() => {});
+
+    // Upload to Supabase Storage bucket "images"
+    const { error: uploadError } = await supabase.storage
+      .from('images')
+      .upload(filePath, blob, { 
+        cacheControl: '3600', 
+        upsert: true,
+        contentType: blob.type 
+      });
+
+    if (uploadError) {
+      console.error('Upload error:', uploadError);
+      // Fallback: return the base64 itself
+      return base64DataUrl;
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('images')
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  } catch (err) {
+    console.error('Image upload failed:', err);
+    return base64DataUrl;
+  }
+};
+
 export const db = {
   // --- TICKETS ---
   getTickets: async (): Promise<Ticket[]> => {

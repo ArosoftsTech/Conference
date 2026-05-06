@@ -12,7 +12,7 @@ import {
   AreaChart, Area
 } from 'recharts';
 import { Ticket, Speaker, Session, Partner, FAQ } from '../types';
-import { db } from '../lib/db';
+import { db, uploadImage } from '../lib/db';
 
 interface AdminDashboardProps {
   tickets: Ticket[];
@@ -237,11 +237,20 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSaveSpeaker = async () => {
     if (!speakerForm.name || !speakerForm.role || !speakerForm.imageUrl) return alert("Champs manquants");
+    
+    const speakerId = speakerForm.id || generateUUID();
+    
+    // Upload image to Supabase Storage if it's a base64 data URL
+    let finalImageUrl = speakerForm.imageUrl!;
+    if (finalImageUrl.startsWith('data:')) {
+      finalImageUrl = await uploadImage(finalImageUrl, 'speakers', speakerId);
+    }
+    
     await db.saveSpeaker({
-      id: speakerForm.id || generateUUID(),
+      id: speakerId,
       name: speakerForm.name!,
       role: speakerForm.role!,
-      imageUrl: speakerForm.imageUrl!,
+      imageUrl: finalImageUrl,
       orderIndex: speakerForm.orderIndex || 0
     });
     onUpdateSpeakers(await db.getSpeakers());
@@ -294,10 +303,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   const handleSavePartner = async () => {
     if (!partnerForm.name || !partnerForm.logoUrl) return alert("Champs manquants");
+    
+    const partnerId = partnerForm.id || generateUUID();
+    
+    // Upload logo to Supabase Storage if it's a base64 data URL
+    let finalLogoUrl = partnerForm.logoUrl!;
+    if (finalLogoUrl.startsWith('data:')) {
+      finalLogoUrl = await uploadImage(finalLogoUrl, 'partners', partnerId);
+    }
+    
     await db.savePartner({
-      id: partnerForm.id || generateUUID(),
+      id: partnerId,
       name: partnerForm.name!,
-      logoUrl: partnerForm.logoUrl!,
+      logoUrl: finalLogoUrl,
       websiteUrl: partnerForm.websiteUrl,
       tier: partnerForm.tier as any,
       orderIndex: partnerForm.orderIndex || 0
