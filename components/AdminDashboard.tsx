@@ -36,6 +36,32 @@ const generateUUID = () => {
   });
 };
 
+const compressImage = (file: File, maxWidth = 600): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target?.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ratio = Math.min(maxWidth / img.width, 1);
+        canvas.width = img.width * ratio;
+        canvas.height = img.height * ratio;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL('image/jpeg', 0.7));
+        } else {
+          resolve(event.target?.result as string);
+        }
+      };
+      img.onerror = (error) => reject(error);
+    };
+    reader.onerror = (error) => reject(error);
+  });
+};
+
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
   tickets, onUpdateTickets, 
   speakers, onUpdateSpeakers, 
@@ -197,12 +223,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // --- SPEAKERS HANDLERS ---
-  const handleSpeakerImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSpeakerImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setSpeakerForm({ ...speakerForm, imageUrl: reader.result as string });
-      reader.readAsDataURL(file);
+      try {
+        const compressedBase64 = await compressImage(file, 600);
+        setSpeakerForm({ ...speakerForm, imageUrl: compressedBase64 });
+      } catch (err) {
+        console.error("Erreur de compression", err);
+      }
     }
   };
 
@@ -251,12 +280,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   };
 
   // --- PARTNERS HANDLERS ---
-  const handlePartnerLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePartnerLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setPartnerForm({ ...partnerForm, logoUrl: reader.result as string });
-      reader.readAsDataURL(file);
+      try {
+        const compressedBase64 = await compressImage(file, 400);
+        setPartnerForm({ ...partnerForm, logoUrl: compressedBase64 });
+      } catch (err) {
+        console.error("Erreur de compression", err);
+      }
     }
   };
 
@@ -626,7 +658,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div onClick={() => speakerFileInputRef.current?.click()} className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-200 bg-[#f8fafc] flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 overflow-hidden relative">
                        {speakerForm.imageUrl ? <img src={speakerForm.imageUrl} className="w-full h-full object-cover" /> : <><ImageIcon size={24} className="text-slate-300" /><p className="text-xs font-black uppercase text-slate-400 mt-2">Photo de l'intervenant</p></>}
                     </div>
-                    <input type="file" ref={speakerFileInputRef} className="hidden" accept="image/*" onChange={handleSpeakerImageUpload} />
+                    <input type="file" ref={speakerFileInputRef} className="hidden" accept="image/png, image/jpeg, image/jpg, image/webp" onChange={handleSpeakerImageUpload} />
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold outline-none focus:border-blue-600 transition-all" placeholder="Nom Complet" value={speakerForm.name} onChange={e => setSpeakerForm({...speakerForm, name: e.target.value})} />
                     <input type="text" className="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold outline-none focus:border-blue-600 transition-all" placeholder="Rôle / Titre" value={speakerForm.role} onChange={e => setSpeakerForm({...speakerForm, role: e.target.value})} />
                     <div className="flex gap-4 pt-4">
@@ -733,7 +765,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                     <div onClick={() => partnerFileInputRef.current?.click()} className="w-full aspect-video rounded-2xl border-2 border-dashed border-slate-200 bg-[#f8fafc] flex flex-col items-center justify-center cursor-pointer overflow-hidden">
                        {partnerForm.logoUrl ? <img src={partnerForm.logoUrl} className="max-h-full object-contain p-4" /> : <><ImageIcon size={24} className="text-slate-300" /><p className="text-[10px] font-black uppercase text-slate-400 mt-2">Logo du partenaire</p></>}
                     </div>
-                    <input type="file" ref={partnerFileInputRef} className="hidden" accept="image/*" onChange={handlePartnerLogoUpload} />
+                    <input type="file" ref={partnerFileInputRef} className="hidden" accept="image/png, image/jpeg, image/jpg, image/webp" onChange={handlePartnerLogoUpload} />
                     <input type="text" className="w-full bg-slate-50 border p-4 rounded-xl font-bold" placeholder="Nom du partenaire" value={partnerForm.name} onChange={e => setPartnerForm({...partnerForm, name: e.target.value})} />
                     <input type="text" className="w-full bg-slate-50 border p-4 rounded-xl text-sm" placeholder="Lien vers site web (Optionnel)" value={partnerForm.websiteUrl} onChange={e => setPartnerForm({...partnerForm, websiteUrl: e.target.value})} />
                     <select className="w-full bg-slate-50 border p-4 rounded-xl text-sm font-bold" value={partnerForm.tier} onChange={e => setPartnerForm({...partnerForm, tier: e.target.value as any})}>
