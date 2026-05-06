@@ -26,6 +26,16 @@ interface AdminDashboardProps {
   onRefresh: () => Promise<void>;
 }
 
+const generateUUID = () => {
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};
+
 export const AdminDashboard: React.FC<AdminDashboardProps> = ({ 
   tickets, onUpdateTickets, 
   speakers, onUpdateSpeakers, 
@@ -199,7 +209,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleSaveSpeaker = async () => {
     if (!speakerForm.name || !speakerForm.role || !speakerForm.imageUrl) return alert("Champs manquants");
     await db.saveSpeaker({
-      id: speakerForm.id || crypto.randomUUID(),
+      id: speakerForm.id || generateUUID(),
       name: speakerForm.name!,
       role: speakerForm.role!,
       imageUrl: speakerForm.imageUrl!,
@@ -220,7 +230,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleSaveSession = async () => {
     if (!sessionForm.title || !sessionForm.startTime || !sessionForm.endTime) return alert("Champs manquants");
     await db.saveSession({
-      id: sessionForm.id || crypto.randomUUID(),
+      id: sessionForm.id || generateUUID(),
       title: sessionForm.title!,
       description: sessionForm.description || '',
       startTime: sessionForm.startTime!,
@@ -253,7 +263,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   const handleSavePartner = async () => {
     if (!partnerForm.name || !partnerForm.logoUrl) return alert("Champs manquants");
     await db.savePartner({
-      id: partnerForm.id || crypto.randomUUID(),
+      id: partnerForm.id || generateUUID(),
       name: partnerForm.name!,
       logoUrl: partnerForm.logoUrl!,
       websiteUrl: partnerForm.websiteUrl,
