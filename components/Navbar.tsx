@@ -62,8 +62,16 @@ export const Navbar: React.FC<NavbarProps> = ({ view, user, isAdmin, onNavigate,
 
           {/* Right Section: Login & Buy Button */}
           <div className="hidden md:flex items-center gap-6">
+            {isAdmin && (
+              <button 
+                onClick={() => onNavigate(view === 'ADMIN' ? 'DASHBOARD' : 'ADMIN')} 
+                className="text-xs font-bold text-blue-600 hover:text-white hover:bg-blue-600 transition-all uppercase tracking-widest border border-blue-200 bg-blue-50 px-4 py-2 rounded-xl"
+              >
+                {view === 'ADMIN' ? 'Espace Participant' : 'Espace Admin'}
+              </button>
+            )}
             <button 
-              onClick={() => onNavigate('DASHBOARD')} 
+              onClick={() => onNavigate(isAdmin && view !== 'ADMIN' ? 'ADMIN' : 'DASHBOARD')} 
               className="text-sm font-black text-slate-900 hover:text-blue-600 transition-colors uppercase tracking-widest"
             >
               {user ? user.firstName : 'Mon Compte'}
@@ -95,7 +103,12 @@ export const Navbar: React.FC<NavbarProps> = ({ view, user, isAdmin, onNavigate,
           <button onClick={() => handleSectionClick('features')} className="block w-full text-left text-slate-600 py-2">À propos</button>
           <button onClick={() => { onNavigate('PURCHASE'); setIsOpen(false); }} className="block w-full text-left text-slate-600 py-2">Billetterie</button>
           <div className="pt-4 border-t border-slate-100 flex flex-col gap-4">
-            <button onClick={() => { onNavigate('DASHBOARD'); setIsOpen(false); }} className="text-slate-900 font-bold text-left">
+            {isAdmin && (
+              <button onClick={() => { onNavigate(view === 'ADMIN' ? 'DASHBOARD' : 'ADMIN'); setIsOpen(false); }} className="text-blue-600 font-bold text-left w-full py-2 bg-blue-50 rounded-lg px-3 border border-blue-100">
+                {view === 'ADMIN' ? 'Basculer vers Espace Participant' : 'Basculer vers Espace Admin'}
+              </button>
+            )}
+            <button onClick={() => { onNavigate(isAdmin && view !== 'ADMIN' ? 'ADMIN' : 'DASHBOARD'); setIsOpen(false); }} className="text-slate-900 font-bold text-left">
               {user ? `Espace ${user.firstName}` : 'Connexion'}
             </button>
             <button onClick={() => { onNavigate('PURCHASE'); setIsOpen(false); }} className="bg-[#0056b3] text-white py-3 rounded-lg font-bold">Acheter mon ticket</button>
