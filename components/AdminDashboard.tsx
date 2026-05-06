@@ -4,7 +4,7 @@ import {
   Download, QrCode, User, Mail, Phone, Calendar, Clock, 
   MapPin, Plus, Trash2, Edit, Ticket as TicketIcon, 
   DollarSign, TrendingUp, Filter, FileText, ImageIcon,
-  ExternalLink, ChevronRight, Eye, CheckCircle2, CreditCard, Edit2
+  ExternalLink, ChevronRight, Eye, CheckCircle2, CreditCard, Edit2, Users, Camera
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, 
