@@ -20,11 +20,29 @@ export const uploadImage = async (base64DataUrl: string, folder: string, fileNam
     // Ensure the bucket exists (will silently fail if already exists)
     await supabase.storage.createBucket('images', { public: true, fileSizeLimit: 5242880 }).catch(() => {});
 
+    // Delete any previous files for this entity to avoid orphan files
+    try {
+      const { data: existingFiles } = await supabase.storage
+        .from('images')
+        .list(folder, { search: fileName });
+      
+      if (existingFiles && existingFiles.length > 0) {
+        const filesToDelete = existingFiles
+          .filter(f => f.name.startsWith(fileName))
+          .map(f => `${folder}/${f.name}`);
+        if (filesToDelete.length > 0) {
+          await supabase.storage.from('images').remove(filesToDelete);
+        }
+      }
+    } catch (cleanupErr) {
+      console.warn('Could not clean up old images:', cleanupErr);
+    }
+
     // Upload to Supabase Storage bucket "images"
     const { error: uploadError } = await supabase.storage
       .from('images')
       .upload(filePath, blob, { 
-        cacheControl: '3600', 
+        cacheControl: '0', 
         upsert: true,
         contentType: blob.type 
       });
@@ -35,12 +53,12 @@ export const uploadImage = async (base64DataUrl: string, folder: string, fileNam
       return base64DataUrl;
     }
 
-    // Get public URL
+    // Get public URL with cache-busting query parameter
     const { data: urlData } = supabase.storage
       .from('images')
       .getPublicUrl(filePath);
 
-    return urlData.publicUrl;
+    return `${urlData.publicUrl}?t=${timestamp}`;
   } catch (err) {
     console.error('Image upload failed:', err);
     return base64DataUrl;
@@ -76,7 +94,12 @@ export const db = {
     }));
   },
 
-  saveTicket: async (ticket: Ticket): Promise<void> => {
+  saveTicket: async (ticket: Ticket): Promise<string | null> => {
+    let screenshotUrl = ticket.paymentScreenshot;
+    if (screenshotUrl && screenshotUrl.startsWith('data:image')) {
+      screenshotUrl = await uploadImage(screenshotUrl, 'screenshots', ticket.reference);
+    }
+
     const { error } = await supabase
       .from('tickets')
       .upsert({
@@ -87,13 +110,17 @@ export const db = {
         quantity: ticket.quantity,
         total_price: ticket.totalPrice,
         payment_method: ticket.paymentMethod,
-        payment_screenshot_url: ticket.paymentScreenshot,
+        payment_screenshot_url: screenshotUrl,
         sender_phone: ticket.senderPhone,
         status: ticket.status,
         qr_code_data: ticket.qrCodeData
       });
 
-    if (error) console.error('Error saving ticket:', error);
+    if (error) {
+      console.error('Error saving ticket:', error);
+      return error.message || 'Erreur lors de la sauvegarde du ticket';
+    }
+    return null;
   },
 
   updateTicketStatus: async (ticketId: string, status: Ticket['status']): Promise<void> => {

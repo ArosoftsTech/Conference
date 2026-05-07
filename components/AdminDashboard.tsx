@@ -36,6 +36,14 @@ const generateUUID = () => {
   });
 };
 
+const ensureValidUUID = (id: string | undefined): string => {
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  if (id && uuidRegex.test(id)) {
+    return id;
+  }
+  return generateUUID();
+};
+
 const compressImage = (file: File, maxWidth = 600): Promise<string> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -228,17 +236,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (file) {
       try {
         const compressedBase64 = await compressImage(file, 600);
-        setSpeakerForm({ ...speakerForm, imageUrl: compressedBase64 });
+        setSpeakerForm(prev => ({ ...prev, imageUrl: compressedBase64 }));
       } catch (err) {
         console.error("Erreur de compression", err);
       }
     }
+    // Reset file input so the same file can be selected again
+    if (e.target) e.target.value = '';
   };
 
   const handleSaveSpeaker = async () => {
     if (!speakerForm.name || !speakerForm.role || !speakerForm.imageUrl) return alert("Champs manquants");
     
-    const speakerId = speakerForm.id || generateUUID();
+    const speakerId = ensureValidUUID(speakerForm.id);
     
     // Upload image to Supabase Storage if it's a base64 data URL
     let finalImageUrl = speakerForm.imageUrl!;
@@ -267,8 +277,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   // --- SESSIONS HANDLERS ---
   const handleSaveSession = async () => {
     if (!sessionForm.title || !sessionForm.startTime || !sessionForm.endTime) return alert("Champs manquants");
+    const sessionId = ensureValidUUID(sessionForm.id);
     await db.saveSession({
-      id: sessionForm.id || generateUUID(),
+      id: sessionId,
       title: sessionForm.title!,
       description: sessionForm.description || '',
       startTime: sessionForm.startTime!,
@@ -294,17 +305,19 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
     if (file) {
       try {
         const compressedBase64 = await compressImage(file, 400);
-        setPartnerForm({ ...partnerForm, logoUrl: compressedBase64 });
+        setPartnerForm(prev => ({ ...prev, logoUrl: compressedBase64 }));
       } catch (err) {
         console.error("Erreur de compression", err);
       }
     }
+    // Reset file input so the same file can be selected again
+    if (e.target) e.target.value = '';
   };
 
   const handleSavePartner = async () => {
     if (!partnerForm.name || !partnerForm.logoUrl) return alert("Champs manquants");
     
-    const partnerId = partnerForm.id || generateUUID();
+    const partnerId = ensureValidUUID(partnerForm.id);
     
     // Upload logo to Supabase Storage if it's a base64 data URL
     let finalLogoUrl = partnerForm.logoUrl!;
@@ -650,7 +663,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
         <div className="space-y-6 animate-in fade-in duration-500">
           <div className="flex items-center justify-between">
              <h2 className="text-2xl font-bold flex items-center gap-2 text-slate-900"><Users size={24} className="text-blue-600" /> Intervenants</h2>
-             <button onClick={() => { setSpeakerForm({ name: '', role: '', imageUrl: '', orderIndex: speakers.length }); setShowSpeakerForm(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-blue-700 transition-all"><Plus size={20} /> Ajouter</button>
+             <button onClick={() => { setSpeakerForm({ name: '', role: '', imageUrl: '', orderIndex: speakers.length }); if (speakerFileInputRef.current) speakerFileInputRef.current.value = ''; setShowSpeakerForm(true); }} className="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg hover:bg-blue-700 transition-all"><Plus size={20} /> Ajouter</button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {speakers.map(speaker => (
@@ -658,7 +671,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 <div className="aspect-[4/5] bg-slate-100 rounded-xl overflow-hidden relative">
                   <img src={speaker.imageUrl} alt={speaker.name} className="w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
-                    <button onClick={() => { setSpeakerForm(speaker); setShowSpeakerForm(true); }} className="p-3 bg-white rounded-full text-blue-600 hover:scale-110"><Edit2 size={20} /></button>
+                    <button onClick={() => { setSpeakerForm(speaker); if (speakerFileInputRef.current) speakerFileInputRef.current.value = ''; setShowSpeakerForm(true); }} className="p-3 bg-white rounded-full text-blue-600 hover:scale-110"><Edit2 size={20} /></button>
                     <button onClick={() => handleDeleteSpeaker(speaker.id)} className="p-3 bg-white rounded-full text-red-600 hover:scale-110"><Trash2 size={20} /></button>
                   </div>
                 </div>

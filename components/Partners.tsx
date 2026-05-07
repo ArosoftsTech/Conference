@@ -19,7 +19,7 @@ export const Partners: React.FC<PartnersProps> = ({ partners }) => {
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.25em] mb-6">
             Partenariat & Sponsoring
           </div>
-          <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
+          <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
             ILS SOUTIENNENT <br /> <span className="gradient-text">L'EXCELLENCE</span>
           </h2>
         </div>

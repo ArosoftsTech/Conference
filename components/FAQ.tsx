@@ -21,7 +21,7 @@ export const FAQ: React.FC<FAQProps> = ({ faqs }) => {
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full bg-blue-50 text-blue-600 text-[10px] font-black uppercase tracking-[0.25em] mb-6">
             Centre d'aide participant
           </div>
-          <h2 className="text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
+          <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-slate-900 tracking-tight leading-none uppercase">
             DES RÉPONSES À <br /> <span className="gradient-text">VOS QUESTIONS</span>
           </h2>
         </div>

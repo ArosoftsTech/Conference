@@ -21,7 +21,7 @@ import { EVENT_DETAILS, CRYPTO_WALLETS, CFA_TO_USD_RATE } from '../constants';
 import { PaymentMethod, CryptoCurrency, CryptoNetwork, Ticket, UserInfo } from '../types';
 
 interface PurchaseFlowProps {
-  onSuccess: (ticket: Ticket) => void;
+  onSuccess: (ticket: Ticket) => Promise<void>;
   onCancel: () => void;
 }
 
@@ -43,6 +43,7 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
     network: CryptoNetwork.TRC20
   });
   const [isProcessing, setIsProcessing] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [confirmEmail, setConfirmEmail] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -107,39 +108,53 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
 
   const simulatePayment = async () => {
     setIsProcessing(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    setSubmitError(null);
     
-    const ref = Math.random().toString(36).substr(2, 5).toUpperCase();
-    const reference = `SL2026-${ref}`;
-    
-    // Encode full user info in the QR Code data
-    const qrData = JSON.stringify({
-      ref: reference,
-      nom: userInfo.lastName,
-      prenom: userInfo.firstName,
-      email: userInfo.email,
-      tel: userInfo.phone,
-      pay: paymentMethod,
-      qty: quantity
-    });
+    try {
+      const ref = Math.random().toString(36).substr(2, 5).toUpperCase();
+      const reference = `SL2026-${ref}`;
+      
+      // Encode full user info in the QR Code data
+      const qrData = JSON.stringify({
+        ref: reference,
+        nom: userInfo.lastName,
+        prenom: userInfo.firstName,
+        email: userInfo.email,
+        tel: userInfo.phone,
+        pay: paymentMethod,
+        qty: quantity
+      });
 
-    const newTicket: Ticket = {
-      id: Math.random().toString(36).substr(2, 9),
-      reference,
-      ownerName: `${userInfo.firstName} ${userInfo.lastName}`,
-      ownerEmail: userInfo.email,
-      purchaseDate: new Date().toISOString().split('T')[0],
-      quantity,
-      totalPrice: quantity * EVENT_DETAILS.pricePerTicket,
-      status: 'PENDING',
-      paymentMethod,
-      qrCodeData: qrData,
-      paymentScreenshot: screenshot || undefined,
-      senderPhone: senderPhone || undefined
-    };
-    
-    setIsProcessing(false);
-    onSuccess(newTicket);
+      const newTicket: Ticket = {
+        id: (() => {
+          if (typeof window !== 'undefined' && window.crypto && window.crypto.randomUUID) {
+            return window.crypto.randomUUID();
+          }
+          return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+          });
+        })(),
+        reference,
+        ownerName: `${userInfo.firstName} ${userInfo.lastName}`,
+        ownerEmail: userInfo.email,
+        purchaseDate: new Date().toISOString().split('T')[0],
+        quantity,
+        totalPrice: quantity * EVENT_DETAILS.pricePerTicket,
+        status: 'PENDING',
+        paymentMethod,
+        qrCodeData: qrData,
+        paymentScreenshot: screenshot || undefined,
+        senderPhone: senderPhone || undefined
+      };
+      
+      await onSuccess(newTicket);
+    } catch (err) {
+      console.error('Payment submission error:', err);
+      setSubmitError("Une erreur est survenue lors de la soumission. Veuillez réessayer.");
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const totalPrice = quantity * EVENT_DETAILS.pricePerTicket;
@@ -148,7 +163,7 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Stepper */}
-      <div className="flex items-center justify-between mb-16 px-4 md:px-12">
+      <div className="flex items-center justify-between mb-10 px-2 md:px-12">
         {[
           { id: 1, label: 'Tickets' },
           { id: 2, label: 'Informations' },
@@ -156,20 +171,20 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
           { id: 4, label: 'Confirmation' }
         ].map((s, i) => (
           <React.Fragment key={s.id}>
-            <div className="flex flex-col items-center gap-3 relative">
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center text-sm font-bold transition-all z-10 ${
+            <div className="flex flex-col items-center gap-2 relative">
+              <div className={`w-8 h-8 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold transition-all z-10 ${
                 step >= s.id ? 'bg-[#0056b3] text-white' : 'bg-[#f0f7ff] text-slate-400'
               }`}>
                 {s.id}
               </div>
-              <span className={`text-xs font-bold transition-colors ${
+              <span className={`text-[10px] sm:text-xs font-bold transition-colors hidden sm:block ${
                 step >= s.id ? 'text-slate-900' : 'text-slate-400'
               }`}>
                 {s.label}
               </span>
             </div>
             {i < 3 && (
-              <div className="flex-1 h-[2px] mb-8 mx-2 bg-[#f0f7ff] overflow-hidden">
+              <div className="flex-1 h-[2px] mb-4 sm:mb-8 mx-1 sm:mx-2 bg-[#f0f7ff] overflow-hidden">
                 <div 
                   className="h-full bg-[#0056b3] transition-all duration-500" 
                   style={{ width: step > s.id ? '100%' : '0%' }}
@@ -189,7 +204,7 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-slate-900">Pass Success Life 2026</h2>
-                <p className="text-slate-500 font-medium">10 000 F CFA par ticket</p>
+                <p className="text-slate-500 font-medium">{EVENT_DETAILS.pricePerTicket.toLocaleString()} F CFA par ticket</p>
               </div>
             </div>
 
@@ -476,10 +491,22 @@ export const PurchaseFlow: React.FC<PurchaseFlowProps> = ({ onSuccess, onCancel 
                     <span className="text-3xl font-black text-[#0056b3]">{totalPrice.toLocaleString()} F CFA</span>
                   </div>
                 </div>
+                {submitError && (
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-2xl flex items-center gap-3 text-red-600 font-bold text-sm animate-in fade-in duration-300">
+                    <AlertCircle size={20} className="flex-shrink-0" />
+                    <span>{submitError}</span>
+                  </div>
+                )}
               </div>
               <div className="flex gap-6 w-full max-w-2xl">
-                <button onClick={handlePrev} className="flex-1 py-5 rounded-2xl bg-white border border-slate-200 text-slate-600 font-bold text-xl hover:bg-slate-50">Retour</button>
-                <button onClick={simulatePayment} className="flex-[2] py-5 rounded-2xl bg-[#0056b3] text-white font-black text-2xl hover:bg-[#004494] shadow-2xl shadow-blue-200">Soumettre le paiement</button>
+                <button onClick={handlePrev} disabled={isProcessing} className="flex-1 py-5 rounded-2xl bg-white border border-slate-200 text-slate-600 font-bold text-xl hover:bg-slate-50 disabled:opacity-50">Retour</button>
+                <button onClick={simulatePayment} disabled={isProcessing} className="flex-[2] py-5 rounded-2xl bg-[#0056b3] text-white font-black text-2xl hover:bg-[#004494] shadow-2xl shadow-blue-200 disabled:opacity-50 flex items-center justify-center gap-3">
+                  {isProcessing ? (
+                    <><Loader2 size={24} className="animate-spin" /> Envoi en cours...</>
+                  ) : (
+                    'Soumettre le paiement'
+                  )}
+                </button>
               </div>
             </>
           )}

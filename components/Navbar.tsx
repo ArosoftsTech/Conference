@@ -39,9 +39,7 @@ export const Navbar: React.FC<NavbarProps> = ({ view, user, isAdmin, onNavigate,
         <div className="flex items-center justify-between h-20">
           {/* Logo Section */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => onNavigate('HOME')}>
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg transform rotate-[-5deg]">
-              <span className="font-black text-white text-base">CIA</span>
-            </div>
+            <img src="/logo-cia.png" alt="CIA Logo" className="w-12 h-12 object-contain" />
             <div className="flex flex-col">
               <span className="font-black text-slate-900 text-lg leading-tight uppercase tracking-tight">Conférence</span>
               <span className="font-bold text-blue-600 text-[10px] leading-tight uppercase tracking-wider">Success Life 2026</span>

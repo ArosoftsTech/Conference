@@ -25,7 +25,7 @@ CREATE TABLE tickets (
   payment_method TEXT NOT NULL CHECK (payment_method IN ('MOBILE_MONEY', 'CRYPTO')),
   payment_screenshot_url TEXT,
   sender_phone TEXT,
-  status TEXT DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'VALIDATED', 'USED')),
+  status TEXT DEFAULT 'PENDING' CHECK (status IN ('PENDING', 'VALIDATED', 'USED', 'REJECTED')),
   qr_code_data TEXT NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );

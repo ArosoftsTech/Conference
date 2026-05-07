@@ -21,7 +21,7 @@ export const Reviews: React.FC<ReviewsProps> = ({ reviews }) => {
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass-dark text-blue-400 text-[10px] font-black uppercase tracking-[0.25em]">
             <Star size={14} fill="currentColor" className="animate-pulse" /> Retours d'expérience
           </div>
-          <h2 className="text-5xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
+          <h2 className="text-3xl sm:text-5xl md:text-7xl font-black text-white tracking-tight leading-none uppercase">
             ILS ONT VÉCU <br /> <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">L'EXPÉRIENCE CIA</span>
           </h2>
         </div>

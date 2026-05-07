@@ -10,9 +10,7 @@ export const Footer: React.FC = () => {
           {/* Brand & Description */}
           <div className="space-y-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-[#0047ab] flex items-center justify-center shadow-sm">
-                <span className="font-bold text-white text-sm">CIA</span>
-              </div>
+              <img src="/logo-cia.png" alt="CIA Logo" className="w-16 h-16 object-contain" />
               <span className="font-bold text-slate-900 text-lg leading-tight">
                 Club des Investisseurs<br />Africains
               </span>

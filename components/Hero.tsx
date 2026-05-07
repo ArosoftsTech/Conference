@@ -33,7 +33,14 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
   const progressPercentage = (soldTickets / totalTickets) * 100;
 
   return (
-    <div id="hero" className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-24 overflow-hidden mesh-gradient">
+    <div 
+      id="hero" 
+      className="relative min-h-screen flex flex-col items-center justify-center pt-32 pb-24 overflow-hidden bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: `url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=2000&q=80')` }}
+    >
+      {/* Translucent overlay to highlight text readability */}
+      <div className="absolute inset-0 bg-slate-50/90 backdrop-blur-[3px] z-0"></div>
+
       {/* Decorative Elements */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
         <div className="absolute top-20 right-[5%] w-96 h-96 bg-blue-600/10 rounded-full blur-[100px] animate-pulse"></div>
@@ -48,7 +55,7 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
         {/* Header Branding */}
         <div className="flex flex-col items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-1000">
           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass border-slate-200/50 shadow-xl shadow-blue-500/5">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-black text-sm transform -rotate-12">CIA</div>
+            <img src="/logo-cia.png" alt="CIA Logo" className="w-8 h-8 object-contain" />
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{EVENT_DETAILS.organization}</span>
           </div>
         </div>
@@ -62,7 +69,7 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
 
         {/* Hero Title */}
         <div className="space-y-6 max-w-5xl mx-auto px-4">
-          <h1 className="text-5xl md:text-8xl font-black text-slate-900 leading-[1.05] tracking-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-8xl font-black text-slate-900 leading-[1.1] tracking-tight">
             COMMENT <span className="gradient-text">REPROGRAMMER</span> <br className="hidden md:block" /> 
             SON CERVEAU POUR <span className="relative">
               RÉUSSIR
@@ -70,29 +77,29 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
               <div className="absolute -bottom-1 left-0 w-full h-1.5 bg-orange-500/20 -rotate-1 -z-10 rounded-full"></div>
             </span>
           </h1>
-          <p className="text-xl md:text-2xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed opacity-0 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-forwards">
+          <p className="text-base sm:text-xl md:text-2xl text-slate-500 font-medium max-w-3xl mx-auto leading-relaxed opacity-0 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-500 fill-mode-forwards">
             {EVENT_DETAILS.description}
           </p>
         </div>
 
         {/* Action Blocks */}
-        <div className="flex flex-col lg:flex-row items-stretch justify-center gap-8 max-w-5xl mx-auto w-full pt-4">
+        <div className="flex flex-col lg:flex-row items-stretch justify-center gap-6 sm:gap-8 max-w-5xl mx-auto w-full pt-4">
           {/* Main Booking Card */}
-          <div className="flex-1 glass p-10 rounded-[3rem] space-y-8 relative overflow-hidden group hover:scale-[1.02] transition-all duration-500 border-white shadow-2xl shadow-blue-500/5">
+          <div className="flex-1 glass p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] space-y-8 relative overflow-hidden group hover:scale-[1.02] transition-all duration-500 border-white shadow-2xl shadow-blue-500/5">
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-600/5 rounded-full -mr-16 -mt-16 group-hover:scale-150 transition-transform duration-700"></div>
             
             <div className="text-left space-y-2">
                <span className="text-[10px] font-black uppercase tracking-widest text-blue-600">Inscription Prioritaire</span>
                <div className="flex items-baseline gap-2">
-                  <span className="text-5xl font-black text-slate-900">{EVENT_DETAILS.pricePerTicket.toLocaleString()}</span>
-                  <span className="text-xl font-bold text-slate-400">F CFA</span>
+                  <span className="text-4xl sm:text-5xl font-black text-slate-900">{EVENT_DETAILS.pricePerTicket.toLocaleString()}</span>
+                  <span className="text-lg font-bold text-slate-400">F CFA</span>
                </div>
             </div>
 
             <div className="space-y-4">
-              <button 
+               <button 
                 onClick={onBuy}
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 sm:py-5 rounded-2xl font-black text-sm uppercase tracking-widest flex items-center justify-center gap-3 transition-all shadow-xl shadow-blue-500/20 active:scale-95"
               >
                 Prendre mon Pass <ArrowRight size={18} />
               </button>
@@ -103,7 +110,7 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
           </div>
 
           {/* Details Card */}
-          <div className="flex-1 bg-slate-900 p-10 rounded-[3rem] flex flex-col justify-between text-white relative group overflow-hidden hover:scale-[1.02] transition-all duration-500">
+          <div className="flex-1 bg-slate-900 p-6 sm:p-10 rounded-[2rem] sm:rounded-[3rem] flex flex-col justify-between text-white relative group overflow-hidden hover:scale-[1.02] transition-all duration-500">
              <div className="absolute bottom-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mb-16 group-hover:scale-150 transition-transform duration-700"></div>
              
              <div className="grid grid-cols-1 gap-6 text-left">
@@ -125,7 +132,7 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
 
              <button 
                 onClick={onReserve}
-                className="mt-10 w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all"
+                className="mt-8 sm:mt-10 w-full bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 sm:py-5 rounded-2xl font-black text-sm uppercase tracking-widest transition-all"
              >
                 Réserver sans payer
              </button>
@@ -133,7 +140,7 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
         </div>
 
         {/* Countdown Floating Panel */}
-        <div className="inline-flex items-center gap-8 md:gap-12 glass px-12 py-6 rounded-[2.5rem] border-white shadow-2xl animate-float">
+        <div className="flex flex-wrap sm:inline-flex items-center justify-center gap-4 sm:gap-8 md:gap-12 glass px-6 py-4 sm:px-12 sm:py-6 rounded-[2rem] sm:rounded-[2.5rem] border-white shadow-2xl animate-float mx-auto">
           {[
             { label: 'Jours', val: timeLeft.days },
             { label: 'Heures', val: timeLeft.hours },
@@ -141,11 +148,11 @@ export const Hero: React.FC<HeroProps> = ({ onBuy, onReserve }) => {
             { label: 'Secondes', val: timeLeft.seconds }
           ].map((item, i) => (
             <React.Fragment key={i}>
-              <div className="flex flex-col items-center">
-                <span className="text-3xl md:text-4xl font-black text-slate-900 tabular-nums tracking-tighter">{item.val.toString().padStart(2, '0')}</span>
-                <span className="text-[10px] font-black text-blue-600 uppercase tracking-widest">{item.label}</span>
+              <div className="flex flex-col items-center min-w-[50px] sm:min-w-0">
+                <span className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tabular-nums tracking-tighter">{item.val.toString().padStart(2, '0')}</span>
+                <span className="text-[9px] sm:text-[10px] font-black text-blue-600 uppercase tracking-widest">{item.label}</span>
               </div>
-              {i < 3 && <div className="h-8 w-px bg-slate-200"></div>}
+              {i < 3 && <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>}
             </React.Fragment>
           ))}
         </div>

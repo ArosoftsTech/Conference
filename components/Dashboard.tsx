@@ -249,7 +249,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ user, tickets, onLogin }) 
                    <div className="relative z-10 w-[68%] h-full p-12 flex flex-col justify-between">
                       <div className="space-y-6">
                         <div className="flex items-center gap-3">
-                           <div className="w-12 h-12 rounded-xl bg-blue-600 flex items-center justify-center text-white font-black text-xl">CIA</div>
+                           <img src="/logo-cia.png" alt="CIA Logo" className="w-16 h-16 object-contain" />
                            <div className="text-xs font-black text-slate-400 uppercase tracking-[0.2em]">{EVENT_DETAILS.organization}</div>
                         </div>
                         

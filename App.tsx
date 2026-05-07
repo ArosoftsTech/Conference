@@ -80,9 +80,35 @@ const App: React.FC = () => {
   };
 
   const handleTicketPurchased = async (newTicket: Ticket) => {
-    await db.saveTicket(newTicket);
+    // Save the ticket to Supabase
+    const saveError = await db.saveTicket(newTicket);
+    if (saveError) {
+      throw new Error(saveError);
+    }
+
+    // Auto-login the purchaser so the Dashboard shows their tickets
+    const nameParts = newTicket.ownerName.split(' ');
+    const purchaserUser = {
+      firstName: nameParts[0] || '',
+      lastName: nameParts.slice(1).join(' ') || '',
+      email: newTicket.ownerEmail,
+      phone: newTicket.senderPhone || '',
+      role: 'USER'
+    };
+    
+    // Save user profile (will upsert if exists)
+    await db.saveUser(purchaserUser);
+    localStorage.setItem('sl2026_session_user', JSON.stringify(purchaserUser));
+    
+    // Refresh tickets and navigate to dashboard
     const updatedTickets = await db.getTickets();
-    setAppState(prev => ({ ...prev, tickets: updatedTickets, view: 'DASHBOARD' }));
+    setAppState(prev => ({ 
+      ...prev, 
+      tickets: updatedTickets, 
+      currentUser: purchaserUser,
+      isAdmin: false,
+      view: 'DASHBOARD' 
+    }));
   };
 
   const loginUser = async (user: UserInfo) => {
